@@ -1,0 +1,35 @@
+﻿<Window x:Class="Aplicação___Escola___Treinamento.AdicionaNota"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Aplicação___Escola___Treinamento"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Adiciona Nota"  Height="200" Width="525"
+        WindowStartupLocation="CenterScreen" Background="#FFE9E6E6">
+    <Window.Foreground>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="Black"/>
+            <GradientStop Color="#FFDF94E6" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.Foreground>
+    <Window.BorderBrush>
+        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+            <GradientStop Color="Black"/>
+            <GradientStop Color="#FFA323DA" Offset="1"/>
+        </LinearGradientBrush>
+    </Window.BorderBrush>
+    <Grid Margin="0,0,0,3">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <ComboBox ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:Materia}}}" SelectedItem="{Binding NomeMateria}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="294" Height="22" Margin="0,43,0,0" />
+        <TextBox HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding Nota}" VerticalAlignment="Center" Width="294" Height="24"/>
+        <Button Content="Adicionar" HorizontalAlignment="Center" Margin="0,122,0,0" VerticalAlignment="Top" Click="bnt_AddNota"  Height="24" Width="96"/>
+    </Grid>
+</Window>

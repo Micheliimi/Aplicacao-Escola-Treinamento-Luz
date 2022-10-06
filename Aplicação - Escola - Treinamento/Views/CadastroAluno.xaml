@@ -1,0 +1,21 @@
+﻿<Window x:Class="Aplicação___Escola___Treinamento.CadastroAluno"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Aplicação___Escola___Treinamento"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="Cadastro de Aluno" Height="200" Width="525"
+        WindowStartupLocation="CenterScreen" Background="#FFE9E6E6">
+
+    <Grid RenderTransformOrigin="0.029,0.495" HorizontalAlignment="Center" Width="426" Margin="0,0,0,-6">
+        <Grid.RowDefinitions>
+        </Grid.RowDefinitions>
+        <TextBox HorizontalAlignment="Center" Margin="0,50,0,0" TextWrapping="Wrap" Text="{Binding NomeCompleto}" VerticalAlignment="Top" Width="294" Height="24"/>
+        <Button Content="Salvar" HorizontalAlignment="Center" Margin="0,135,0,0" VerticalAlignment="Top" Click="bnt_Salvar" Height="24" Width="96"/>
+        <Label Content="CADASTRO DE ALUNOS" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,19,0,0"/>
+        <ComboBox ItemsSource="{Binding Source={local:EnumBindingSource {x:Type local:Ano}}}" SelectedItem="{Binding Serie}" HorizontalAlignment="Center" VerticalAlignment="Top" Width="294" Height="24" SelectionChanged="ComboBox_SelectionChanged" Margin="0,89,0,0"/>
+
+    </Grid>
+</Window>
