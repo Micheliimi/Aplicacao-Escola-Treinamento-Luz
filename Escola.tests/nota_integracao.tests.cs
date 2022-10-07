@@ -41,7 +41,7 @@ namespace Escola.tests
         }
 
         [Fact]
-        public void busca_alunos_lista()
+        public void busca_nota_lista()
         {
             using (var mock = AutoMock.GetLoose())
             {

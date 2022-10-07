@@ -46,8 +46,8 @@ namespace Escola.tests
                     .Returns(MockAlunos());
 
                 var cls = mock.Create<GenericDb>();
-                var expected = MockAlunos();
-                var actual = cls.BuscaAlunos();
+                var expected = MockAlunos().ToList();
+                var actual = cls.BuscaAlunos().ToList();
 
                 Assert.True(actual != null);
                 Assert.Equal(expected.Count, actual.Count);

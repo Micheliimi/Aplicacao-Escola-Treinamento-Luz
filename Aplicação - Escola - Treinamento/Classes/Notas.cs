@@ -9,27 +9,17 @@ using Aplicação___Escola___Treinamento;
 
 namespace Aplicação___Escola___Treinamento
 {
-    public class MateriaNota : INotifyPropertyChanged
+    public class MateriaNota : ICloneable
     {
         private int codNota;
         private Materia nomeMateria;
         private int nota = 0;
 
-        public MateriaNota()
-        {
-        }
-        public MateriaNota(Materia nomeMateria, int nota, int codNota)
-        {
-            this.NomeMateria = nomeMateria;
-            this.Nota = nota;
-            this.CodNota = codNota;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void Notifica(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        //public event PropertyChangedEventHandler PropertyChanged;
+        //private void Notifica(string propertyName)
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //}
 
         public Materia NomeMateria
         {
@@ -48,7 +38,11 @@ namespace Aplicação___Escola___Treinamento
             get { return codNota; }
             set { codNota = value; }
         }
-     
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 
 }

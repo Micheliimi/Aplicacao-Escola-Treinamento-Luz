@@ -43,8 +43,6 @@ namespace Escola.tests
         [Fact]
         public void busca_alunos_lista()
         {
-            using (var mock = AutoMock.GetLoose())
-            {
 				Mock<IDatabase> mockedDB = new Mock<IDatabase>();
 				mockedDB.Setup(x => x.BuscaAlunos()).Returns(MockAlunos());
 
@@ -65,7 +63,6 @@ namespace Escola.tests
                     Assert.Equal(expected[i].NomeCompleto, actual[i].NomeCompleto);
                     Assert.Equal(expected[i].Serie, actual[i].Serie);
                 }
-            }
         }
 
 	}

@@ -34,15 +34,13 @@ namespace Aplicação___Escola___Treinamento
 
         private readonly GenericDb _conn;
 
-        //private MySqlCommand command;
-
-        //private string sql;
         public MainWindowVM()
         {
-            _conn = new GenericDb(new MysqlDb());
+            _conn = new GenericDb(new PGsqlDb());
             try
             {
                listaAluno = new ObservableCollection<Aluno>(_conn.BuscaAlunos());
+                Notifica();
             } 
             catch (Exception ex)
             {
@@ -89,7 +87,7 @@ namespace Aplicação___Escola___Treinamento
 
                 } catch (Exception ex)
                 {
-                    MessageBox.Show("" + ex);
+                    MessageBox.Show("" + ex.Message);
                 }
 
             });
@@ -106,7 +104,7 @@ namespace Aplicação___Escola___Treinamento
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("" + ex);
+                    MessageBox.Show("" + ex.Message);
                 }
 
 
@@ -115,23 +113,22 @@ namespace Aplicação___Escola___Treinamento
 
             Update = new RelayCommand((object _) =>
             {
-
+                Aluno alunoClonado = (Aluno)AlunoSelecionado.Clone();
                 AtualizaDadosAluno telaAtualiza = new AtualizaDadosAluno();
-                telaAtualiza.DataContext = AlunoSelecionado;
+                telaAtualiza.DataContext = alunoClonado;
                 bool? verificaBotao = telaAtualiza.ShowDialog();
 
                 if (verificaBotao.HasValue && verificaBotao.Value)
                 {
                     try
                     {
-                        _conn.AtualizaAluno(AlunoSelecionado);
-
+                        _conn.AtualizaAluno(alunoClonado);
                         listaAluno = new ObservableCollection<Aluno>(_conn.BuscaAlunos());
                         Notifica();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("" + ex);
+                        MessageBox.Show("" + ex.Message);
                     }
                 }
 
@@ -150,21 +147,21 @@ namespace Aplicação___Escola___Treinamento
                 try
                 {
                     _conn.InsereNota(AlunoSelecionado, novaNota);
-
                     listaNotas = new ObservableCollection<MateriaNota>(_conn.BuscaNotas(AlunoSelecionado));
                     Notifica();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("" + ex);
+                    MessageBox.Show("" + ex.Message);
                 }
 
             }, (object _) => this.AlunoSelecionado != null);
 
             UpdateGrade = new RelayCommand((object _) =>
             {
+                MateriaNota notaClonada = (MateriaNota)NotaSelecionada.Clone();
                 EditaNota tela = new EditaNota();
-                tela.DataContext = NotaSelecionada;
+                tela.DataContext = notaClonada;
                 
                 bool? verificaBotao = tela.ShowDialog();
                 
@@ -172,16 +169,14 @@ namespace Aplicação___Escola___Treinamento
                 {
                     try
                     {
-                        _conn.AtualizaNota(NotaSelecionada);
-
+                        _conn.AtualizaNota(notaClonada);
                         listaNotas = new ObservableCollection<MateriaNota>(_conn.BuscaNotas(AlunoSelecionado));
                         Notifica();
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("" + ex);
+                        MessageBox.Show("" + ex.Message);
                     }
-
                 }
 
             }, (object _) => this.NotaSelecionada != null);
@@ -191,13 +186,12 @@ namespace Aplicação___Escola___Treinamento
                 try
                 {
                     _conn.RemoveNota(NotaSelecionada);
-
                     listaNotas = new ObservableCollection<MateriaNota>(_conn.BuscaNotas(AlunoSelecionado));
                     Notifica();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("" + ex);
+                    MessageBox.Show("" + ex.Message);
                 }
 
             }, (object _) => this.NotaSelecionada != null);

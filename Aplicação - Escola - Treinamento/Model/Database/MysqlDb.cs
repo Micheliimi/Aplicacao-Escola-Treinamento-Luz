@@ -94,79 +94,96 @@ namespace Aplicação___Escola___Treinamento.Database
             //}
         //}
 
-        public List<Aluno> BuscaAlunos()
+       // public List<Aluno> BuscaAlunos()
+       // {
+            //_query = $@"SELECT * FROM escola_db.alunos;";
+        //    List<Aluno> lista = new List<Aluno>();
+            
+        //    try
+        //    {
+        //        using (MySqlConnection con = new MySqlConnection(_strConnect()))
+        //        {
+        //            con.Open();
+        //            using(MySqlCommand cmd = new MySqlCommand(_query, con))
+        //            {
+        //                using (MySqlDataReader reader = cmd.ExecuteReader())
+        //                {
+        //                    while (reader.Read())
+        //                    {
+        //                        Aluno aluno = new Aluno()
+        //                        {
+        //                            CodAluno = reader.GetInt32(0),
+        //                            NomeCompleto = reader.GetString(1),
+        //                            Serie = (Ano)reader.GetInt32(2),
+        //                        };
+
+        //                        lista.Add(aluno);
+        //                    }
+        //                    return lista;
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+        //}
+
+        public IEnumerable<Aluno> BuscaAlunos()
         {
             _query = $@"SELECT * FROM escola_db.alunos;";
-            List<Aluno> lista = new List<Aluno>();
-            
-            try
-            {
-                using (MySqlConnection con = new MySqlConnection(_strConnect()))
-                {
-                    con.Open();
-                    using(MySqlCommand cmd = new MySqlCommand(_query, con))
-                    {
-                        using (MySqlDataReader reader = cmd.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                Aluno aluno = new Aluno()
-                                {
-                                    CodAluno = reader.GetInt32(0),
-                                    NomeCompleto = reader.GetString(1),
-                                    Serie = (Ano)reader.GetInt32(2),
-                                };
 
-                                lista.Add(aluno);
-                            }
-                            return lista;
+            using (MySqlConnection con = new MySqlConnection(_strConnect()))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand(_query, con))
+                {
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            yield return new Aluno()
+                            {
+                                CodAluno = reader.GetInt32(0),
+
+                                NomeCompleto = reader.GetString(1),
+                                Serie = (Ano)reader.GetInt32(2),
+                            };
+
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
 
-        public List<MateriaNota> BuscaNotas(Aluno alunoSelecionado)
+        public IEnumerable<MateriaNota> BuscaNotas(Aluno alunoSelecionado)
            
         {
 
             _query = $@"SELECT * FROM escola_db.aluno_materia_nota
             WHERE aluno_id = {alunoSelecionado.CodAluno};";
-            List<MateriaNota> lista = new List<MateriaNota>();
-            try
+
+            using (MySqlConnection con = new MySqlConnection(_strConnect()))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand(_query, con))
                 {
-                    using (MySqlConnection con = new MySqlConnection(_strConnect()))
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
-                        con.Open();
-                        using (MySqlCommand cmd = new MySqlCommand(_query, con))
+                        while (reader.Read())
                         {
-                            using (MySqlDataReader reader = cmd.ExecuteReader())
+                            yield return new MateriaNota()
                             {
-                                while (reader.Read())
-                                {
-                                    MateriaNota nota = new MateriaNota()
-                                    {
-                                        CodNota = reader.GetInt32(0),
-                                        NomeMateria = (Materia)reader.GetInt32(2),
-                                        Nota = reader.GetInt32(3),
-                                    };
-                                    lista.Add(nota);
-                                    
-                                }
-                            return lista;
-                            }
+                                CodNota = reader.GetInt32(0),
+                                NomeMateria = (Materia)reader.GetInt32(2),
+                                Nota = reader.GetInt32(3),
+                            };
                         }
                     }
                 }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
             }
+        }
         
         
         //private void _CloseConnection()
@@ -277,8 +294,6 @@ namespace Aplicação___Escola___Treinamento.Database
 
         private void _ExecuteQuery(string query)
         {
-            try
-            {
                 using (MySqlConnection con = new MySqlConnection(_strConnect()))
                 {
                     con.Open();
@@ -287,12 +302,6 @@ namespace Aplicação___Escola___Treinamento.Database
                         cmd.ExecuteNonQuery();
                     }
                 }
-            }
-            catch (Exception ex)
-
-            {
-                throw ex;
-            }
         }
     }
 }

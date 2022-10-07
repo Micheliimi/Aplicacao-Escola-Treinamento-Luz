@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Aplicação___Escola___Treinamento.Interfaces;
+using MySql.Data.MySqlClient;
 using Npgsql;
 
 namespace Aplicação___Escola___Treinamento.Model.Database
@@ -29,94 +30,74 @@ namespace Aplicação___Escola___Treinamento.Model.Database
         {
             _host = "localhost";
 
-            _port = "3306";
+            _port = "5432";
 
-            _user = "root";
+            _user = "postgres";
 
             _password = "102030";
 
             _dbname = "escola_db";
 
-            return $"Server={_host};Username={_user};Databasee={_dbname};Port={_port};Password={_password};";
+            return $"Server={_host};Username={_user};Database={_dbname};Port={_port};Password={_password};";
         }
 
-        public List<Aluno> BuscaAlunos()
+      
+        public IEnumerable<Aluno> BuscaAlunos()
         {
-            _query = $@"SELECT * FROM escola_db.alunos;";
-            List<Aluno> lista = new List<Aluno>();
+            _query = $@"SELECT * FROM alunos;";
 
-            try
+            using (NpgsqlConnection con = new NpgsqlConnection(_strConnect()))
             {
-                using (NpgsqlConnection con = new NpgsqlConnection(_strConnect()))
+                con.Open();
+                using (NpgsqlCommand cmd = new NpgsqlCommand(_query, con))
                 {
-                    con.Open();
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(_query, con))
+                    using (NpgsqlDataReader reader = cmd.ExecuteReader())
                     {
-                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
+                            yield return new Aluno()
                             {
-                                Aluno aluno = new Aluno()
-                                {
-                                    CodAluno = reader.GetInt32(0),
-                                    NomeCompleto = reader.GetString(1),
-                                    Serie = (Ano)reader.GetInt32(2),
-                                };
+                                CodAluno = reader.GetInt32(0),
+                                NomeCompleto = reader.GetString(1),
+                                Serie = (Ano)reader.GetInt32(2),
+                            };
 
-                                lista.Add(aluno);
-                            }
-                            return lista;
                         }
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
         }
-
-        public List<MateriaNota> BuscaNotas(Aluno alunoSelecionado)
+        public IEnumerable<MateriaNota> BuscaNotas(Aluno alunoSelecionado)
 
         {
 
-            _query = $@"SELECT * FROM escola_db.aluno_materia_nota
+            _query = $@"SELECT * FROM aluno_materia_nota
             WHERE aluno_id = {alunoSelecionado.CodAluno};";
-            List<MateriaNota> lista = new List<MateriaNota>();
-            try
+            using (NpgsqlConnection con = new NpgsqlConnection(_strConnect()))
             {
-                using (NpgsqlConnection con = new NpgsqlConnection(_strConnect()))
+                con.Open();
+                using (NpgsqlCommand cmd = new NpgsqlCommand(_query, con))
                 {
-                    con.Open();
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(_query, con))
+                    using (NpgsqlDataReader reader = cmd.ExecuteReader())
                     {
-                        using (NpgsqlDataReader reader = cmd.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
+                                yield return new MateriaNota()
                             {
-                                MateriaNota nota = new MateriaNota()
-                                {
-                                    CodNota = reader.GetInt32(0),
-                                    NomeMateria = (Materia)reader.GetInt32(2),
-                                    Nota = reader.GetInt32(3),
-                                };
-                                lista.Add(nota);
+                                CodNota = reader.GetInt32(0),
+                                NomeMateria = (Materia)reader.GetInt32(2),
+                                Nota = reader.GetInt32(3),
+                            };
 
-                            }
-                            return lista;
                         }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                throw ex;
             }
         }
 
         public void InsereAluno(Aluno aluno)
         {
-            _query = $@"INSERT INTO escola_db.alunos(nome_completo, serie_id)
+            _query = $@"INSERT INTO alunos(nome_completo, serie_id)
                 VALUES
                 ('{aluno.NomeCompleto}', '{(int)aluno.Serie}')";
 
@@ -127,7 +108,7 @@ namespace Aplicação___Escola___Treinamento.Model.Database
         public void RemoveAluno(Aluno aluno)
         {
             _query = $@"DELETE
-                FROM  escola_db.alunos
+                FROM alunos
                 WHERE id = '{aluno.CodAluno}'";
 
             _ExecuteQuery(_query);
@@ -136,7 +117,7 @@ namespace Aplicação___Escola___Treinamento.Model.Database
         public void AtualizaAluno(Aluno aluno)
         {
             _query = $@"UPDATE
-                escola_db.alunos
+                alunos
                 SET nome_completo = '{aluno.NomeCompleto}', serie_id = '{(int)aluno.Serie}'
                 WHERE id = '{aluno.CodAluno}'";
 
@@ -145,8 +126,7 @@ namespace Aplicação___Escola___Treinamento.Model.Database
 
         public void InsereNota(Aluno aluno, MateriaNota nota)
         {
-            _query = $@"USE escola_db;
-                INSERT INTO aluno_materia_nota(aluno_id, materia_id, nota)
+            _query = $@"INSERT INTO aluno_materia_nota(aluno_id, materia_id, nota)
                 VALUES ('{aluno.CodAluno}', '{(int)nota.NomeMateria}', '{nota.Nota}')";
 
             _ExecuteQuery(_query);
@@ -154,8 +134,7 @@ namespace Aplicação___Escola___Treinamento.Model.Database
 
         public void AtualizaNota(MateriaNota nota)
         {
-            _query = $@"USE escola_db;
-                UPDATE aluno_materia_nota
+            _query = $@"UPDATE aluno_materia_nota
                 SET materia_id = '{(int)nota.NomeMateria}', nota = '{nota.Nota}'
                 WHERE id = '{nota.CodNota}'";
 
@@ -163,8 +142,7 @@ namespace Aplicação___Escola___Treinamento.Model.Database
         }
         public void RemoveNota(MateriaNota nota)
         {
-            _query = $@"USE escola_db;
-                        DELETE
+            _query = $@"DELETE
                         FROM aluno_materia_nota
                         WHERE id = '{nota.CodNota}'";
 
@@ -180,8 +158,8 @@ namespace Aplicação___Escola___Treinamento.Model.Database
         {
 
             _query = $@"
-                CREATE TABLE escola_db.alunos (
-                id INTEGER auto_increment PRIMARY KEY NOT NULL,
+                CREATE TABLE alunos (
+                id SERIAL PRIMARY KEY NOT NULL,
                 nome_completo VARCHAR(50) NOT NULL,
                 serie_id INTEGER,
                 FOREIGN KEY (serie_id) REFERENCES series (id)
@@ -190,8 +168,8 @@ namespace Aplicação___Escola___Treinamento.Model.Database
             _ExecuteQuery(_query);
 
             _query = $@"
-                CREATE TABLE escola_db.aluno_materia_nota (
-                id INTEGER auto_increment PRIMARY KEY NOT NULL,
+                CREATE TABLE aluno_materia_nota (
+                id SERIAL PRIMARY KEY NOT NULL,
                 aluno_id INTEGER,
                 FOREIGN KEY (aluno_id) REFERENCES alunos (id)
 	            ON DELETE CASCADE ON UPDATE CASCADE,
@@ -204,16 +182,14 @@ namespace Aplicação___Escola___Treinamento.Model.Database
         }
         private void _DropaTabelas()
         {
-            _query = @"DROP TABLE IF EXISTS escola_db.aluno_materia_nota;
-                       DROP TABLE IF EXISTS escola_db.alunos;";
+            _query = @"DROP TABLE IF EXISTS aluno_materia_nota;
+                       DROP TABLE IF EXISTS alunos;";
             _ExecuteQuery(_query);
 
         }
 
         private void _ExecuteQuery(string query)
         {
-            try
-            {
                 using (NpgsqlConnection con = new NpgsqlConnection(_strConnect()))
                 {
                     con.Open();
@@ -222,12 +198,6 @@ namespace Aplicação___Escola___Treinamento.Model.Database
                         cmd.ExecuteNonQuery();
                     }
                 }
-            }
-            catch (Exception ex)
-
-            {
-                throw ex;
-            }
         }
     }
 }

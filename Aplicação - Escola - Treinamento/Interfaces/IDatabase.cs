@@ -8,9 +8,11 @@ namespace Aplicação___Escola___Treinamento.Interfaces
 {
     public interface IDatabase
     {
-        List<Aluno> BuscaAlunos();
-        List<MateriaNota> BuscaNotas(Aluno aluno);
+        //Task<List<Aluno>> BuscaAlunos();
+        IEnumerable<Aluno> BuscaAlunos();
+        IEnumerable<MateriaNota> BuscaNotas(Aluno aluno);
         void InsereAluno(Aluno aluno);
+        //Task InsereAluno(Aluno aluno);
         void RemoveAluno(Aluno aluno);
         void AtualizaAluno(Aluno aluno);
         void InsereNota(Aluno aluno, MateriaNota nota);

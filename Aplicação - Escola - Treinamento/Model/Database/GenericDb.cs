@@ -9,19 +9,24 @@ namespace Aplicação___Escola___Treinamento.Model.Database
 {
     public class GenericDb
     {
-        static IDatabase db;
+        private IDatabase db;
 
          public GenericDb(IDatabase newData)
         {
             db = newData;
         }
 
-        public List<Aluno> BuscaAlunos()
+        //public async Task<List<Aluno>> BuscaAlunos()
+        //{
+        //    return await db.BuscaAlunos();
+        //}
+
+        public IEnumerable<Aluno> BuscaAlunos()
         {
             return db.BuscaAlunos();
         }
 
-        public List<MateriaNota> BuscaNotas(Aluno aluno)
+        public IEnumerable<MateriaNota> BuscaNotas(Aluno aluno)
         {
             return db.BuscaNotas(aluno);
         }
